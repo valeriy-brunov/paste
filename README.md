@@ -71,9 +71,9 @@ echo $this->Webcomp->paste([options]);
 
 ```php
 <?php $this->start('paste') ?>
-    <div class="brunov-paste__progress">...</div>
-    <div class="brunov-paste__trubber">...</div>
-    <div class="brunov-paste__replace"></div>// Заглушка.
+    <div class="paste__progress">...</div>
+    <div class="paste__trubber">...</div>
+    <div class="paste__replace"></div>// Заглушка.
 <?php $this->end() ?>
 <?php echo
     $this->Webcomp->paste([
