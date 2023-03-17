@@ -30,7 +30,10 @@ export default {
      */
     css( p ) { return `
         <style>
-            paste {}
+            paste paste__trubber,
+            paste paste__replace {
+                display: none;
+            }
             paste_trubber paste__trubber {
                 display: block;
             }
