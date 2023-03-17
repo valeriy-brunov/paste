@@ -30,7 +30,19 @@ export default {
      */
     css( p ) { return `
         <style>
-            :host { color: red; }// Для paste.
+            paste {}
+            paste_trubber paste__trubber {
+                display: block;
+            }
+            paste_trubber paste__replace {
+                display: none;
+            }
+            paste_replace paste__trubber {
+                display: none;
+            }
+            paste_replace paste__replace {
+                display: block;
+            }
         </style>`;
     },
 }
