@@ -63,7 +63,7 @@ export default class Paste extends HTMLElement {
         if ( this.hasAttribute( 'firstLoad' ) ) {
             return this.getAttribute( 'firstLoad' );
         }
-        else return Paste.FIRSTLOAD;
+        else return Paste.DEFAULT_FIRSTLOAD;
     }
     static get DEFAULT_FIRSTLOAD() {
         return false;
@@ -80,7 +80,7 @@ export default class Paste extends HTMLElement {
         if ( this.hasAttribute( 'nextLoad' ) ) {
             return this.getAttribute( 'nextLoad' );
         }
-        else return Paste.NEXTLOAD;
+        else return Paste.DEFAULT_NEXTLOAD;
     }
     static get DEFAULT_NEXTLOAD() {
         return false;
@@ -100,7 +100,7 @@ export default class Paste extends HTMLElement {
         else return Paste.DEFAULT_PROGRESSID;
     }
     static get DEFAULT_PROGRESSID() {
-        return '#';
+        return false;
     }
 
     /**
@@ -125,13 +125,20 @@ export default class Paste extends HTMLElement {
      *     установленному в веб-компоненте.
      */
     attributeChangedCallback( name, oldVal, newVal ) {
-        switch( name ) {
-            case 'Имя атрибута':
+        // Для атрибута 'url'.
+        if ( name == 'url' && oldVal ) {
+            switch( name ) {
+                case 'Имя атрибута':
+                    // Выполняемый код.
+                    break;
+                case 'Имя атрибута':
                 // Выполняемый код.
                 break;
-            case 'Имя атрибута':
-            // Выполняемый код.
-            break;
+            }
+        }
+        // Для атрибута 'nextLoad'.
+        if ( name == 'nextLoad' && oldVal ) {
+
         }
     }
 
@@ -140,8 +147,22 @@ export default class Paste extends HTMLElement {
      * (может вызываться много раз, если элемент многократно добавляется/удаляется).
      */
     connectedCallback() {
+        switch( this.firstLoad ) {
+            case 'loader':
+                
+                break;
+            case 'progress':
+
+                break;
+            case 'progress-loader':
+                
+                break;
+            //case 'html':
+                // Никаких действий не требуется.
+        }
         // СОБЫТИЯ:
         // this.dom.valera.addEventListener('click', (e) => console.log(e.currentTarget));// Для примера.
+
     }
 }
 
