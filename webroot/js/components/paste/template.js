@@ -21,7 +21,9 @@ export default {
      */
     mapDom( scope ) {
         return {
-            tagTempl: scope.querySelector('.field-simbol-template'),// Тег <template>.
+            tagTrubber: scope.querySelector('.paste__trubber'),
+            tagReplace: scope.querySelector('.paste__replace'),
+            tagProgress: scope.querySelector('paste__progress'),
         }
     },
 
