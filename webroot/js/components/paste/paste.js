@@ -104,6 +104,25 @@ export default class Paste extends HTMLElement {
     }
 
     /**
+     * Добавляет взаимоисключающие классы.
+     * @param {string} val Имя класса: "replace" или "trubber".
+     */
+    addClass( val ) {
+        if ( this.classList.contains( 'paste_replace' ) ) {
+            this.classList.remove( 'paste_replace' );
+        }
+        if ( this.classList.contains( 'paste_trubber' ) ) {
+            this.classList.remove( 'paste_trubber' );
+        }
+        if ( val == 'replace' ) {
+            this.classList.add( 'paste_replace' );
+        }
+        else if ( val == 'trubber' ) {
+            this.classList.add( 'paste_trubber' );
+        }
+    }
+
+    /**
      * Определяем, за какими атрибутами необходимо наблюдать.
      *
      * @return array Массив атрибутов.
@@ -157,7 +176,8 @@ export default class Paste extends HTMLElement {
             case 'progress-loader':
                 
                 break;
-            //case 'html':
+            case 'html':
+                this.classList.add('paste_replace');
                 // Никаких действий не требуется.
         }
         // СОБЫТИЯ:
