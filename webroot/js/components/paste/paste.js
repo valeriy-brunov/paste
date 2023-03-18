@@ -177,8 +177,7 @@ export default class Paste extends HTMLElement {
                 
                 break;
             case 'html':
-                this.classList.add('paste_replace');
-                // Никаких действий не требуется.
+                this.addClass( 'replace' );
         }
         // СОБЫТИЯ:
         // this.dom.valera.addEventListener('click', (e) => console.log(e.currentTarget));// Для примера.
