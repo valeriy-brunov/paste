@@ -35,6 +35,14 @@ describe("Тест вэб-компонента Paste.", function() {
         assert.equal( paste.classList.contains( 'paste_trubber' ), true, 'Класс "paste_trubber" не установлен!');
         assert.equal( paste.classList.contains( 'paste_replace' ), false, 'Класс "paste_replace" не удалён!' );
     });
+
+    it("Для 'firstLoad=html' проверим установку класса 'paste_replace'.", function() {
+        let testDiv = document.getElementById( 'test' );
+        testDiv.innerHTML = '<brunov-paste firstload="html" class="paste"></brunov-paste>';
+        let p = testDiv.querySelector( '.paste' );
+        assert.equal( p.classList.contains( 'paste_replace' ), true, 'Класс "paste_replace" не установлен!' );
+        testDiv.innerHTML = '';
+    });
     /*it("Функция из файла template!", function() {
         assert.equal( Template.mapDomShadow(), 8 );
     });*/
