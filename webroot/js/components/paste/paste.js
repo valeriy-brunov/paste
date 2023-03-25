@@ -168,7 +168,7 @@ export default class Paste extends HTMLElement {
     connectedCallback() {
         switch( this.firstLoad ) {
             case 'loader':
-                
+                this.addClass( 'trubber' );
                 break;
             case 'progress':
 
