@@ -168,6 +168,7 @@ export default class Paste extends HTMLElement {
         switch( this.firstLoad ) {
             case 'loader':
                 this.addClass( 'trubber' );
+                this.query();
                 break;
             case 'progress':
                 this.addClass( 'replace' );
@@ -193,6 +194,7 @@ export default class Paste extends HTMLElement {
             success: function( html ) {
                 let replace = mythis.querySelector( '.paste__replace' );
                 replace.replaceWith( html );
+                mythis.addClass( 'replace' );
             },
             error: function( status, statusText ) {},
             errorConnect: function() {},

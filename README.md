@@ -86,3 +86,5 @@ echo $this->Webcomp->paste([options]);
     ]);
 ?>
 ```
+
+> :memo: AJAX-запрос должен обязательно возвращать слой `<div class="paste__replace"></div>`.
