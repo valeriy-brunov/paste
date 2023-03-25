@@ -22,7 +22,6 @@ export default {
     mapDom( scope ) {
         return {
             tagTrubber: scope.querySelector('.paste__trubber'),
-            tagReplace: scope.querySelector('.paste__replace'),
             tagProgress: scope.querySelector('paste__progress'),
         }
     },

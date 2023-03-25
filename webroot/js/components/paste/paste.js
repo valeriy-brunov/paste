@@ -3,6 +3,7 @@
  */
 
 import Template from './template.js';
+import Ajax from './ajax.js';
 
 /**
  * Класс Paste
@@ -37,6 +38,7 @@ export default class Paste extends HTMLElement {
 
     /**
      * Атрибут "url".
+     * 
      * @param {string} val
      */
     set url( val ) {
@@ -54,6 +56,7 @@ export default class Paste extends HTMLElement {
 
     /**
      * Атрибут "firstLoad".
+     * 
      * @param {string} val
      */
     set firstLoad( val ) {
@@ -71,6 +74,7 @@ export default class Paste extends HTMLElement {
 
     /**
      * Атрибут "nextLoad".
+     * 
      * @param {string} val
      */
     set nextLoad( val ) {
@@ -88,6 +92,7 @@ export default class Paste extends HTMLElement {
 
     /**
      * Атрибут "progressId".
+     * 
      * @param {string} val
      */
     set progressId( val ) {
@@ -105,6 +110,7 @@ export default class Paste extends HTMLElement {
 
     /**
      * Добавляет взаимоисключающие классы.
+     * 
      * @param {string} val Имя класса: "replace" или "trubber".
      */
     addClass( val ) {
@@ -124,7 +130,7 @@ export default class Paste extends HTMLElement {
 
     /**
      * Определяем, за какими атрибутами необходимо наблюдать.
-     *
+     * 
      * @return array Массив атрибутов.
      */
     static get observedAttributes() {
@@ -175,6 +181,22 @@ export default class Paste extends HTMLElement {
         // СОБЫТИЯ:
         // this.dom.valera.addEventListener('click', (e) => console.log(e.currentTarget));// Для примера.
 
+    }
+
+    /**
+     * AJAX-запрос на сервер.
+     */
+    query() {
+        let mythis = this;
+        Ajax.connect({
+            url: mythis.url,
+            success: function( html ) {
+                let replace = mythis.querySelector( '.paste__replace' );
+                replace.replaceWith( html );
+            },
+            error: function( status, statusText ) {},
+            errorConnect: function() {},
+        });
     }
 }
 
