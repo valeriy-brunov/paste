@@ -171,10 +171,10 @@ export default class Paste extends HTMLElement {
                 this.addClass( 'trubber' );
                 break;
             case 'progress':
-
+                this.addClass( 'replace' );
                 break;
             case 'progress-loader':
-                
+                this.addClass( 'trubber' );
                 break;
             case 'html':
                 this.addClass( 'replace' );
