@@ -1,0 +1,1 @@
+<div class="paste__replace">ТЕСТ</div>
