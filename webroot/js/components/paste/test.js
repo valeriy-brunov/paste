@@ -24,7 +24,7 @@ var assert = chai.assert;
  */
 describe("Тест вэб-компонента Paste.", function() {
 
-    describe("Проверка на установку классов:", function() {
+    describe("Установка классов при первоначальной загрузке:", function() {
 
         it("Проверка на установку класса 'paste_replace'.", function() {
             paste.addClass( 'replace' );
