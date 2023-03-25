@@ -59,7 +59,7 @@ export default {
             const request = new XMLHttpRequest();
             if ( p.file ) {
                 request.upload.addEventListener('progress', (e) => {
-                    p.progress( event.loaded, event.total );
+                    p.progress( e.loaded, e.total );
                 });
                 request.onloadend.addEventListener('loadend', (e) => {
                     if ( request.status == 200 ) {
@@ -91,8 +91,8 @@ export default {
                 request.addEventListener('error', () => {
                     p.errorConnect();
                 });
-                request.addEventListener('progress', ( event ) => {
-                    p.progress( event.loaded, event.total );
+                request.addEventListener('progress', ( e ) => {
+                    p.progress( e.loaded, e.total );
                 });
 
                 if ( "data" in p ) {
