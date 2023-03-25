@@ -41,10 +41,10 @@ class PastePlugin extends BasePlugin
     {
         $routes->plugin(
             'Paste',
-            ['path' => '/pasteajax'],
+            ['path' => '/paste'],
             function (RouteBuilder $builder) {
                 // Add custom routes here
-                $builder->connect('/{text}', [
+                $builder->connect('/ajax/{text}', [
                     'controller' => 'Testwc',
                     'action' => 'index']
                 )->setPass(['text']);
