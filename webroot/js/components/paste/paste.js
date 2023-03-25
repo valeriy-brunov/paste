@@ -144,20 +144,13 @@ export default class Paste extends HTMLElement {
      *     установленному в веб-компоненте.
      */
     attributeChangedCallback( name, oldVal, newVal ) {
-        // Для атрибута 'url'.
-        if ( name == 'url' && oldVal ) {
-            switch( name ) {
-                case 'Имя атрибута':
-                    // Выполняемый код.
+        if ( oldVal ) {
+            switch ( name ) {
+                case 'url':// Для атрибута 'url'.
                     break;
-                case 'Имя атрибута':
-                // Выполняемый код.
-                break;
+                case 'nextLoad':// Для атрибута 'nextLoad'.
+                    break;
             }
-        }
-        // Для атрибута 'nextLoad'.
-        if ( name == 'nextLoad' && oldVal ) {
-
         }
     }
 
