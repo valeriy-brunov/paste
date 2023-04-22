@@ -19,7 +19,7 @@ class TestwcController extends AppController
      */
     public function index( $text )
     {
-        $this->viewBuilder()->setLayout('Webcomponent.test');
+        $this->viewBuilder()->setLayout('ajax');
 
         $this->set( 'text', $text );
     }

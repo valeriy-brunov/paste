@@ -40,6 +40,7 @@ export default class Paste extends HTMLElement {
      * Атрибут "url".
      * 
      * @param {string} val
+     * @return void
      */
     set url( val ) {
         this.setAttribute( 'url', val );
@@ -58,6 +59,7 @@ export default class Paste extends HTMLElement {
      * Атрибут "firstLoad".
      * 
      * @param {string} val
+     * @return void
      */
     set firstLoad( val ) {
         this.setAttribute( 'firstLoad', val );
@@ -76,6 +78,7 @@ export default class Paste extends HTMLElement {
      * Атрибут "nextLoad".
      * 
      * @param {string} val
+     * @return void
      */
     set nextLoad( val ) {
         this.setAttribute( 'nextLoad', val );
@@ -94,6 +97,7 @@ export default class Paste extends HTMLElement {
      * Атрибут "progressId".
      * 
      * @param {string} val
+     * @return void
      */
     set progressId( val ) {
         this.setAttribute( 'progressId', val );
@@ -112,6 +116,7 @@ export default class Paste extends HTMLElement {
      * Добавляет взаимоисключающие классы.
      * 
      * @param {string} val Имя класса: "replace" или "trubber".
+     * @return void
      */
     addClass( val ) {
         if ( this.classList.contains( 'paste_replace' ) ) {
@@ -186,20 +191,38 @@ export default class Paste extends HTMLElement {
 
     /**
      * AJAX-запрос на сервер.
+     * 
+     * @return void
      */
     query() {
-        let mythis = this;
-        Ajax.connect({
-            url: mythis.url,
-            success: function( html ) {
-                let replace = mythis.querySelector( '.paste__replace' );
-                replace.replaceWith( html );
-                mythis.addClass( 'replace' );
-            },
-            error: function( status, statusText ) {},
-            errorConnect: function() {},
-        });
+        let self = this;
+        if ( self.url != '#' ) {
+            Ajax.connect({
+                url: self.url,
+                success: function( html ) {
+                    self.replaceDiv( html );
+                },
+                error: function( status, statusText ) {},
+                errorConnect: function() {},
+            });
+        }
     }
+
+    /**
+     * Заменяет тег с классом "paste__replace" на код html.
+     * 
+     * @param {string} html html-код, который заменит тег "<div class='paste__replace'>".
+     * @param {object} self Объект веб-компонента.
+     * @return void
+     */
+    replaceDiv( html, self = this ) {
+        let replace = self.querySelector( '.paste__replace' );
+        if ( replace ) {
+            replace.remove();
+            self.insertAdjacentHTML( 'beforeend', html );
+            self.addClass( 'replace' );
+        }
+    };
 }
 
 /**

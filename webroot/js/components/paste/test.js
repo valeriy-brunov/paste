@@ -3,12 +3,12 @@
  */
 import '/cms/webcomponent/js/testlibs/mocha.js';
 import '/cms/webcomponent/js/testlibs/chai.js';
+import '/cms/webcomponent/js/testlibs/sinon.js';
 
 /**
  * Импортируем основные файлы веб-компонента для тестирования.
  */
 import Paste from './paste.js';
-//import Template from './template.js';
 
 // Для именованных классов необходимо создать объект.
 var paste = new Paste();
@@ -18,6 +18,7 @@ var paste = new Paste();
  */
 mocha.setup( 'bdd' );
 var assert = chai.assert;
+var expect = chai.expect;
 
 /**
  * Тесты.
@@ -48,13 +49,47 @@ describe("Тест вэб-компонента Paste.", function() {
             });
         }
 
-        let typeload = ['html', 'loader', 'progress', 'progress-loader'];
-        let classpaste = ['replace', 'trubber', 'replace', 'trubber'];
-        for (let i = 0; i < typeload.length; i++) {
-            firstload( typeload[i], classpaste[i] );
+        let typeLoad = ['html', 'loader', 'progress', 'progress-loader'];
+        let classPaste = ['replace', 'trubber', 'replace', 'trubber'];
+        for (let i = 0; i < typeLoad.length; i++) {
+            firstload( typeLoad[i], classPaste[i] );
         }
     });
 
+    describe("Проверка работы AJAX-запроса.", function () {
+
+        function ajaxQuery( firstLoad, nextLoad, text ) {
+
+            function createPaste(  firstLoad, nextLoad, text  ) {
+                var test = document.getElementById( 'test' );
+                test.innerHTML = '';
+                let template = document.createElement( 'template' );
+                template.innerHTML = `
+                    <brunov-paste firstload="${firstLoad}" nextLoad="${nextLoad}" url="#" class="paste">
+                        <div class="paste__replace"></div>
+                    </brunov-paste>`;
+                test.appendChild( template.content );
+            };
+
+            beforeEach( () => {
+                createPaste(  firstLoad, nextLoad, text );
+                sinon.stub( paste, 'query').callsFake( paste.replaceDiv( text, test.querySelector('.paste') ) );
+            });
+
+            it(`Для "firstLoad"="${firstLoad}" и "nextLoad"="${nextLoad}"`, function() {
+                let paste = test.querySelector('.paste');
+                let style = paste.querySelector( 'style' );
+                style.remove();
+                assert.equal( paste.textContent.trim(), text, `Для "firstLoad"="${firstLoad}" и "nextLoad"="${nextLoad}" AJAX-запрос сработал с ошибкой!`);
+            });
+
+            afterEach( function() {
+                sinon.restore();
+            });
+        }
+
+        ajaxQuery( 'loader', 'loader', 'tttt222222' );
+    });
     /*it("Функция из файла template!", function() {
         assert.equal( Template.mapDomShadow(), 8 );
     });*/
