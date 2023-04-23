@@ -196,7 +196,7 @@ export default class Paste extends HTMLElement {
      */
     query() {
         let self = this;
-        if ( self.url != '#' ) {
+        if ( self.url != '#' || self.url != '##' ) {
             Ajax.connect({
                 url: self.url,
                 success: function( html ) {
