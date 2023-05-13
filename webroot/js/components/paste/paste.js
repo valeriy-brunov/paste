@@ -158,6 +158,13 @@ export default class Paste extends HTMLElement {
         if ( oldVal ) {
             switch ( name ) {
                 case 'url':// Для атрибута 'url'.
+                    if ( this.nextLoad == 'html' ) {
+                        this.addClass( 'replace' );
+                        this.query();
+                    }
+                    else {
+                        this.modeLoad( this.nextLoad );
+                    }
                     break;
                 case 'nextLoad':// Для атрибута 'nextLoad'.
                     break;
@@ -170,7 +177,19 @@ export default class Paste extends HTMLElement {
      * (может вызываться много раз, если элемент многократно добавляется/удаляется).
      */
     connectedCallback() {
-        switch( this.firstLoad ) {
+        this.modeLoad( this.firstLoad );
+        // СОБЫТИЯ:
+        // this.dom.valera.addEventListener('click', (e) => console.log(e.currentTarget));// Для примера.
+
+    }
+
+    /**
+     * В зависимости от полученного значения вида режима выполняет определённые действия.
+     * 
+     * @param {string} mode Вид режима загрузки.
+     */
+    modeLoad( mode ) {
+        switch( mode ) {
             case 'loader':
                 this.addClass( 'trubber' );
                 this.query();
@@ -184,9 +203,6 @@ export default class Paste extends HTMLElement {
             case 'html':
                 this.addClass( 'replace' );
         }
-        // СОБЫТИЯ:
-        // this.dom.valera.addEventListener('click', (e) => console.log(e.currentTarget));// Для примера.
-
     }
 
     /**
@@ -195,23 +211,22 @@ export default class Paste extends HTMLElement {
      * @return void
      */
     query() {
+        if ( this.url == '#' ) return;
         let self = this;
-        if ( self.url != '#' || self.url != '##' ) {
-            Ajax.connect({
-                url: self.url,
-                success: function( html ) {
-                    self.replaceDiv( html );
-                },
-                error: function( status, statusText ) {},
-                errorConnect: function() {},
-            });
-        }
+        Ajax.connect({
+            url: self.url,
+            success: function( html ) {
+                self.replaceDiv( html );
+            },
+            error: function( status, statusText ) {},
+            errorConnect: function() {},
+        });
     }
 
     /**
      * Заменяет тег с классом "paste__replace" на код html.
      * 
-     * @param {string} html html-код, который заменит тег "<div class='paste__replace'>".
+     * @param {string} html Html-код, который заменит тег "<div class='paste__replace'>".
      * @param {object} self Объект веб-компонента.
      * @return void
      */

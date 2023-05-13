@@ -10,9 +10,6 @@ import '/cms/webcomponent/js/testlibs/sinon.js';
  */
 import Paste from './paste.js';
 
-// Для именованных классов необходимо создать объект.
-var paste = new Paste();
-
 /**
  * Настраиваем библиотеки для тестирования.
  */
@@ -25,52 +22,45 @@ var expect = chai.expect;
  */
 describe("Тест вэб-компонента Paste.", function() {
 
-    const testId = document.getElementById( 'test' );
+    describe(`Проверяем установку классов стилей веб-компонента: "paste_replace" и "paste_trubber":`, function() {
 
-    /**
-     * Создаёт и вставляет вёрстку веб-компонента "Paste".
-     * 
-     * @param {string} firstLoad Вид загрузки, который необходимо применить при первоначальной загрузке страницы.
-     * @param {string} nextLoad Вид загрузки, который необходимо применить при изменение атрибута `url`.
-     * @return void
-     */
-    function createPaste(  firstLoad, nextLoad = '' ) {
-        let template = document.createElement( 'template' );
-        template.innerHTML = `
-            <brunov-paste firstload="${firstLoad}" nextLoad="${nextLoad}" url="#" class="paste">
-                <div class="paste__replace"></div>
-            </brunov-paste>`;
-        testId.appendChild( template.content );
-    };
+        let paste = new Paste();
 
-    /**
-     * Группа тестов.
-     */
-    describe("Установка классов стилей веб-компонента при первоначальной загрузке:", function() {
-
-        it("Проверка на установку класса 'paste_replace'.", function() {
+        it(`Установка класса 'paste_replace'.`, function() {
             paste.addClass( 'replace' );
             assert.equal( paste.classList.contains( 'paste_replace' ), true, 'Класс "paste_replace" не установлен!');
             assert.equal( paste.classList.contains( 'paste_trubber' ), false, 'Класс "paste_trubber" не удалён!' );
         });
-    
-        it("Проверка на установку класса 'paste_trubber'.", function() {
+
+        it(`Установка класса 'paste_trubber'.`, function() {
             paste.addClass( 'trubber' );
             assert.equal( paste.classList.contains( 'paste_trubber' ), true, 'Класс "paste_trubber" не установлен!');
             assert.equal( paste.classList.contains( 'paste_replace' ), false, 'Класс "paste_replace" не удалён!' );
         });
 
+        afterEach(() => {
+            paste.classList.remove( 'paste_trubber' );
+            paste.classList.remove( 'paste_replace' );
+        });
+    });
+
+    describe(`Проверяем установку классов стилей веб-компонента: "paste_replace" и "paste_trubber" в зависимости от установки значений атрибута "firstLoad":`, function() {
+
         function firstLoad( typeLoad, classPaste ) {
-            
-            beforeEach(() => {});
-            
-            it(`Для "firstLoad"="${typeLoad}" проверим установку класса "paste_${classPaste}".`, function() {
-                createPaste( typeLoad );
-                let p = testId.querySelector( '.paste' );
-                assert.equal( p.classList.contains( 'paste_' + classPaste ), true, 'Класс "paste_' + classPaste + '" не установлен!' );
+
+            let paste = new Paste();
+
+            beforeEach(() => {
+                paste.setAttribute( 'firstLoad', typeLoad );
+                paste.setAttribute( 'class', 'paste' );
             });
 
-            afterEach(() => testId.innerHTML = '');
+            it(`Для атрибута "firstLoad"="${typeLoad}" проверим установку класса "paste_${classPaste}".`, function() {
+                paste.connectedCallback();
+                assert.equal( paste.classList.contains( 'paste_' + classPaste ), true, 'Класс "paste_' + classPaste + '" не установлен!' );
+            });
+
+            afterEach(() => {});
         }
 
         let typeLoad = ['html', 'loader', 'progress', 'progress-loader'];
@@ -80,32 +70,77 @@ describe("Тест вэб-компонента Paste.", function() {
         }
     });
 
-    /**
-     * Группа тестов.
-     */
-    describe("Проверка работы AJAX-запроса:", function () {
+    describe(`Проверка работы AJAX-запроса:`, function() {
 
-        function ajaxQuery( firstLoad, nextLoad, text ) {
+        var textReplace = '';
+        function newTextReplace() {
+            textReplace = `replace-text-number-` + Math.floor( Math.random() * 100000 );
+        }
 
-            beforeEach( () => {
-                createPaste( firstLoad, nextLoad );
-                sinon.stub( paste, 'query' ).callsFake( paste.replaceDiv( text, testId.querySelector( '.paste' )));
-            });
+        let paste = new Paste();
+        let sinonFun = sinon.stub( paste, 'query' );
+        let mode = ['html', 'loader'];
 
-            it(`Для "firstLoad"="${firstLoad}" и "nextLoad"="${nextLoad}"`, function() {
-                let paste = testId.querySelector( '.paste' );
-                let style = paste.querySelector( 'style' );
-                style.remove();
-                assert.equal( paste.textContent.trim(), text, `Для "firstLoad"="${firstLoad}" и "nextLoad"="${nextLoad}" AJAX-запрос сработал с ошибкой!`);
-            });
+        paste.setAttribute( 'class', 'paste' );
+        newTextReplace();
+        paste.insertAdjacentHTML( 'beforeend', `<div class="paste__replace">${textReplace}</div>` );
+        paste.setAttribute( 'url', '#' );
 
-            afterEach( () => {
-                testId.innerHTML = '';
-                sinon.restore();
+        function ajaxQuery( firstLoad, nextLoad ) {
+
+            it(`Для атрибута "firstLoad"="${firstLoad}" и "nextLoad"="${nextLoad}"`, () => {
+
+                /**
+                 * Проверка на содержание текста внутри тегов с классом "paste__replace".
+                 */
+                function check() {
+                    let replace = paste.querySelector( '.paste__replace' );
+                    assert.equal( replace.textContent.trim() == textReplace, true, 'AJAX-запрос сработал не верно!' );
+                }
+
+                paste.setAttribute( 'firstLoad', firstLoad );
+                paste.setAttribute( 'nextLoad', nextLoad );
+
+                switch ( firstLoad ) {
+                    case 'html':
+                        paste.connectedCallback();
+                        check();
+                        break;
+                    case 'loader':
+                        newTextReplace();
+                        sinonFun.callsFake( function replaceDiv() {
+                            paste.replaceDiv( `<div class="paste__replace">${textReplace}</div>`);
+                        });
+                        paste.connectedCallback();
+                        check();
+                        break;
+                }
+                switch ( nextLoad ) {
+                    case 'html':
+                        newTextReplace();
+                        sinonFun.callsFake( function replaceDiv() {
+                            paste.replaceDiv( `<div class="paste__replace">${textReplace}</div>`);
+                        });
+                        paste.attributeChangedCallback( 'url', 'test', '#' );
+                        check();
+                        break;
+                    case 'loader':
+                        newTextReplace();
+                        sinonFun.callsFake( function replaceDiv() {
+                            paste.replaceDiv( `<div class="paste__replace">${textReplace}</div>`);
+                        });
+                        paste.attributeChangedCallback( 'url', 'test', '#' );
+                        check();
+                        break;
+                }
             });
         }
 
-        ajaxQuery( 'loader', 'loader', 'tttt222222' );
+        for (let i = 0; i < mode.length; i++) {
+            for (let k = 0; k < mode.length; k++) {
+                ajaxQuery( mode[i], mode[k] );
+            }
+        }
     });
 });
 
