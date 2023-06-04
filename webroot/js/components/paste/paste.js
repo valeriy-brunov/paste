@@ -118,7 +118,7 @@ export default class Paste extends HTMLElement {
      * @param {string} val Имя класса: "replace" или "trubber".
      * @return void
      */
-    addClass( val ) {
+    addClassRt( val ) {
         if ( this.classList.contains( 'paste_replace' ) ) {
             this.classList.remove( 'paste_replace' );
         }
@@ -134,12 +134,31 @@ export default class Paste extends HTMLElement {
     }
 
     /**
+     * Добавляет или удаляет класс "paste_progress".
+     * 
+     * @param {bool} val true - установить класс "paste_progress" или false - удалить класс "paste_progress".
+     * @return void
+     */
+    addClassP( val ) {
+        if ( val ) {
+            if ( !this.classList.contains( 'paste_progress' ) ) {
+                this.classList.add( 'paste_progress' );
+            }
+        }
+        else {
+            if ( this.classList.contains( 'paste_progress' ) ) {
+                this.classList.remove( 'paste_progress' );
+            }
+        }
+    }
+
+    /**
      * Определяем, за какими атрибутами необходимо наблюдать.
      * 
      * @return array Массив атрибутов.
      */
     static get observedAttributes() {
-        //return ['Имя атрибута'];
+        return ['url'];
     }
 
     /**
@@ -159,7 +178,7 @@ export default class Paste extends HTMLElement {
             switch ( name ) {
                 case 'url':// Для атрибута 'url'.
                     if ( this.nextLoad == 'html' ) {
-                        this.addClass( 'replace' );
+                        this.addClassRt( 'replace' );
                         this.query();
                     }
                     else {
@@ -187,26 +206,55 @@ export default class Paste extends HTMLElement {
      * В зависимости от полученного значения вида режима выполняет определённые действия.
      * 
      * @param {string} mode Вид режима загрузки.
+     * @return void
      */
     modeLoad( mode ) {
+        this.addClassP( false );
         switch( mode ) {
             case 'loader':
-                this.addClass( 'trubber' );
+                this.addClassRt( 'trubber' );
                 this.query();
                 break;
             case 'progress':
-                this.addClass( 'replace' );
+                this.addClassP( true );
+                this.queryP();
                 break;
             case 'progress-loader':
-                this.addClass( 'trubber' );
+                this.addClassRt( 'trubber' );
                 break;
             case 'html':
-                this.addClass( 'replace' );
+                this.addClassRt( 'replace' );
         }
     }
 
     /**
-     * AJAX-запрос на сервер.
+     * Запуск прогресс-бара.
+     * 
+     * @return void
+     */
+    startProgress() {
+        this.barStandartProgress = 0;
+        this.barSpeedProgress = 0;
+        this.currentProgress = 0;
+        this.limit = 0;
+        this.totalLoad = 0;
+        this.load = 0;
+        this.standartProgress();
+        this.limitSpeedProgress();
+    }
+
+    /**
+     * Двигает прогресс-бар на нужную величину.
+     * 
+     * @return void
+     */
+    moveProgress() {
+        this.currentProgress = Math.max( this.barStandartProgress, this.barSpeedProgress );
+        this.dom.tagProgress.setAttribute( 'width', `width:${this.currentProgress}%` );
+    }
+
+    /**
+     * AJAX-запрос на сервер для режимов "loader" и "html".
      * 
      * @return void
      */
@@ -216,6 +264,29 @@ export default class Paste extends HTMLElement {
         Ajax.connect({
             url: self.url,
             success: function( html ) {
+                self.replaceDiv( html );
+            },
+            error: function( status, statusText ) {},
+            errorConnect: function() {},
+        });
+    }
+
+    /**
+     * AJAX-запрос на сервер для режима "progress".
+     * 
+     * @return void
+     */
+    queryP() {
+        if ( this.url == '#' ) return;
+        let self = this;
+        Ajax.connect({
+            url: self.url,
+            beforeSend: function() {
+                this.startProgress();
+            },
+            success: function( html ) {
+                this.limit = 50;
+                // Подсчёт количества загрузок.
                 self.replaceDiv( html );
             },
             error: function( status, statusText ) {},
@@ -235,7 +306,7 @@ export default class Paste extends HTMLElement {
         if ( replace ) {
             replace.remove();
             self.insertAdjacentHTML( 'beforeend', html );
-            self.addClass( 'replace' );
+            self.addClassRt( 'replace' );
         }
     };
 }

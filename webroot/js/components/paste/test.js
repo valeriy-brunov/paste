@@ -27,15 +27,22 @@ describe("Тест вэб-компонента Paste.", function() {
         let paste = new Paste();
 
         it(`Установка класса 'paste_replace'.`, function() {
-            paste.addClass( 'replace' );
+            paste.addClassRt( 'replace' );
             assert.equal( paste.classList.contains( 'paste_replace' ), true, 'Класс "paste_replace" не установлен!');
             assert.equal( paste.classList.contains( 'paste_trubber' ), false, 'Класс "paste_trubber" не удалён!' );
         });
 
         it(`Установка класса 'paste_trubber'.`, function() {
-            paste.addClass( 'trubber' );
+            paste.addClassRt( 'trubber' );
             assert.equal( paste.classList.contains( 'paste_trubber' ), true, 'Класс "paste_trubber" не установлен!');
             assert.equal( paste.classList.contains( 'paste_replace' ), false, 'Класс "paste_replace" не удалён!' );
+        });
+
+        it(`Установка  и удаление класса 'paste_progress'.`, function() {
+            paste.addClassP( true );
+            assert.equal( paste.classList.contains( 'paste_progress' ), true, 'Класс "paste_progress" не установлен!' );
+            paste.addClassP( false );
+            assert.equal( paste.classList.contains( 'paste_progress' ), false, 'Класс ""pate_progress не удален!' );
         });
 
         afterEach(() => {
@@ -64,7 +71,7 @@ describe("Тест вэб-компонента Paste.", function() {
         }
 
         let typeLoad = ['html', 'loader', 'progress', 'progress-loader'];
-        let classPaste = ['replace', 'trubber', 'replace', 'trubber'];
+        let classPaste = ['replace', 'trubber', 'progress', 'trubber'];
         for (let i = 0; i < typeLoad.length; i++) {
             firstLoad( typeLoad[i], classPaste[i] );
         }
