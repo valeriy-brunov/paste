@@ -9,6 +9,7 @@ import '/cms/webcomponent/js/testlibs/sinon.js';
  * Импортируем основные файлы веб-компонента для тестирования.
  */
 import Paste from './paste.js';
+import Template from './template.js';
 
 /**
  * Настраиваем библиотеки для тестирования.
@@ -148,6 +149,28 @@ describe("Тест вэб-компонента Paste.", function() {
                 ajaxQuery( mode[i], mode[k] );
             }
         }
+    });
+
+    describe(`Проверяем работу прогресс-бара:`, function() {
+
+        let paste = new Paste();
+        //let sinonFun = sinon.stub( paste, '' );
+
+        beforeEach(() => {
+            paste.setAttribute( 'class', 'paste' );
+            paste.setAttribute( 'url', '#' );
+            paste.insertAdjacentHTML( 'beforeend', `<div class="paste__progress"></div>` );
+            paste.dom = Template.mapDom( paste );
+        });
+
+        it(`Проверяем работу метода "moveProgress":`, function() {
+            paste.barSpeedProgress = Math.floor( Math.random() * 100 );
+            paste.barStandartProgress = Math.floor( Math.random() * 100 );
+            paste.moveProgress();
+            assert.equal( paste.dom.tagProgress.hasAttribute('style'), true, 'Атрибут "style" не установлен!' );
+            assert.equal( paste.dom.tagProgress.style.getPropertyValue('width') == paste.currentProgress + '%', true, 'Значение в атрибуте "style" установлено не верно!');
+        });
+
     });
 });
 

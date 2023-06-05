@@ -250,7 +250,7 @@ export default class Paste extends HTMLElement {
      */
     moveProgress() {
         this.currentProgress = Math.max( this.barStandartProgress, this.barSpeedProgress );
-        this.dom.tagProgress.setAttribute( 'width', `width:${this.currentProgress}%` );
+        this.dom.tagProgress.setAttribute( 'style', `width:${this.currentProgress}%` );
     }
 
     /**
