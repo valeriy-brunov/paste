@@ -154,23 +154,35 @@ describe("Тест вэб-компонента Paste.", function() {
     describe(`Проверяем работу прогресс-бара:`, function() {
 
         let paste = new Paste();
+        paste.insertAdjacentHTML( 'beforeend', `<div class="paste__progress"></div>` );
         //let sinonFun = sinon.stub( paste, '' );
 
         beforeEach(() => {
             paste.setAttribute( 'class', 'paste' );
             paste.setAttribute( 'url', '#' );
-            paste.insertAdjacentHTML( 'beforeend', `<div class="paste__progress"></div>` );
             paste.dom = Template.mapDom( paste );
         });
 
         it(`Проверяем работу метода "moveProgress":`, function() {
             paste.barSpeedProgress = Math.floor( Math.random() * 100 );
             paste.barStandartProgress = Math.floor( Math.random() * 100 );
+            paste.currentProgress = 0;
             paste.moveProgress();
             assert.equal( paste.dom.tagProgress.hasAttribute('style'), true, 'Атрибут "style" не установлен!' );
             assert.equal( paste.dom.tagProgress.style.getPropertyValue('width') == paste.currentProgress + '%', true, 'Значение в атрибуте "style" установлено не верно!');
         });
 
+        it(`Проверяем работу метода "standartProgress":`, function() {
+            let clock = sinon.useFakeTimers({toFake: ["setTimeout"]});
+            sinon.stub( clock, 'setTimeout' ).callsFake(function mytime() {
+                paste.standartProgress();
+            });
+            paste.barSpeedProgress = 0;
+            paste.barStandartProgress = 0;
+            paste.currentProgress = 0;
+            paste.standartProgress();
+            assert.equal( paste.currentProgress == 100, true, 'Прогресс-бар не достиг 100%!' );
+        });
     });
 });
 

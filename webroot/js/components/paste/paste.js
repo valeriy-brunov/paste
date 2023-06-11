@@ -254,6 +254,17 @@ export default class Paste extends HTMLElement {
     }
 
     /**
+     * Перемещат прогресс-бар по стандартному временному промежутку.
+     * 
+     * @return void
+     */
+    standartProgress() {
+        this.barStandartProgress++;
+        this.moveProgress();
+        if ( this.currentProgress < 100 ) setTimeout( this.standartProgress, 100 );
+    }
+
+    /**
      * AJAX-запрос на сервер для режимов "loader" и "html".
      * 
      * @return void
