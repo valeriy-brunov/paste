@@ -174,7 +174,7 @@ describe("Тест вэб-компонента Paste.", function() {
 
         it(`Проверяем работу метода "standartProgress":`, function() {
             let clock = sinon.useFakeTimers({toFake: ["setTimeout"]});
-            sinon.stub( clock, 'setTimeout' ).callsFake(function mytime() {
+            sinon.stub( clock, 'setTimeout' ).callsFake( function mytime() {
                 paste.standartProgress();
             });
             paste.barSpeedProgress = 0;
@@ -182,6 +182,24 @@ describe("Тест вэб-компонента Paste.", function() {
             paste.currentProgress = 0;
             paste.standartProgress();
             assert.equal( paste.currentProgress == 100, true, 'Прогресс-бар не достиг 100%!' );
+        });
+
+        it(`Проверяем работу метода "limitSpeedProgress":`, function() {
+            let clock = sinon.useFakeTimers({toFake: ["setTimeout"]});
+            sinon.stub( clock, 'setTimeout' ).callsFake( function mytime() {
+                if ( paste.currentProgress < paste.limit ) {
+                    paste.limitSpeedProgress();
+                }
+            });
+            paste.barSpeedProgress = 0;
+            paste.barStandartProgress = 0;
+            paste.currentProgress = 0;
+            [0, 20, 40, 70, 100].forEach((item, index, array) => {
+                paste.limit = item;
+                paste.limitSpeedProgress();
+                
+            });
+            console.log(paste.currentProgress);
         });
     });
 });

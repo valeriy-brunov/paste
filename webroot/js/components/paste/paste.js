@@ -254,7 +254,7 @@ export default class Paste extends HTMLElement {
     }
 
     /**
-     * Перемещат прогресс-бар по стандартному временному промежутку.
+     * Двигает прогресс-бар со стандартной скоростью.
      * 
      * @return void
      */
@@ -262,6 +262,19 @@ export default class Paste extends HTMLElement {
         this.barStandartProgress++;
         this.moveProgress();
         if ( this.currentProgress < 100 ) setTimeout( this.standartProgress, 100 );
+    }
+
+    /**
+     * Двигает прогресс-бар до значений 'limit' с повышенной скоростью.
+     * 
+     * @return void
+     */
+    limitSpeedProgress() {
+        if ( this.limit > this.barSpeedProgress ) {
+            this.barSpeedProgress++;
+            this.moveProgress();
+        }
+        if ( this.currentProgress < 100 ) setTimeout( this.limitSpeedProgress, 20 );
     }
 
     /**
