@@ -197,9 +197,8 @@ describe("Тест вэб-компонента Paste.", function() {
             [0, 20, 40, 70, 100].forEach((item, index, array) => {
                 paste.limit = item;
                 paste.limitSpeedProgress();
-                
+                assert.equal( paste.currentProgress == item, true, `Прогресс-бар не достиг ${item}%!` );
             });
-            console.log(paste.currentProgress);
         });
     });
 });
