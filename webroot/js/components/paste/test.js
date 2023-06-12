@@ -155,7 +155,6 @@ describe("Тест вэб-компонента Paste.", function() {
 
         let paste = new Paste();
         paste.insertAdjacentHTML( 'beforeend', `<div class="paste__progress"></div>` );
-        //let sinonFun = sinon.stub( paste, '' );
 
         beforeEach(() => {
             paste.setAttribute( 'class', 'paste' );
@@ -199,6 +198,18 @@ describe("Тест вэб-компонента Paste.", function() {
                 paste.limitSpeedProgress();
                 assert.equal( paste.currentProgress == item, true, `Прогресс-бар не достиг ${item}%!` );
             });
+        });
+
+        it(`Проверяем работу метода "calculatingLimit":`, function() {
+            let total = [0,   1,  1,   2,  2,   10];
+            let load  = [0,   0,  1,   1,  2,   5 ];
+            let limit = [100, 50, 100, 75, 100, 75];
+            for (let i = 0; i < total.length; i++) {
+                paste.totalLoad = total[i];
+                paste.load = load[i];
+                paste.calculatingLimit();
+                assert.equal( paste.limit == limit[i], true, `Ошибка в расчёте!` );
+            }
         });
     });
 });

@@ -278,6 +278,20 @@ export default class Paste extends HTMLElement {
     }
 
     /**
+     * Производит очередной расчёт предела загрузки прогресс-бара.
+     * 
+     * @return void
+     */
+    calculatingLimit() {
+        if ( this.totalLoad == this.load ) {
+            this.limit = 100;
+        }
+        else {
+            this.limit = 50 + (Math.round( (100 - 50)/this.totalLoad ) * this.load);
+        }
+    }
+
+    /**
      * AJAX-запрос на сервер для режимов "loader" и "html".
      * 
      * @return void
