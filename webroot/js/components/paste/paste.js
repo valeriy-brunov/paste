@@ -292,6 +292,34 @@ export default class Paste extends HTMLElement {
     }
 
     /**
+     * Переносит теги "<script>" в шапку страницы (формирует их вновь из js-кода), удаляет теги "<script>"
+     * в переданной переменной "html".
+     * 
+     * @param  {string} html Код-html, полученный от AJAX-запроса.
+     * @return {string} Код-html без тегов "<script>".
+     */
+    moveTagsScript( html ) {
+        let arrHtml = html.split( '</script>' );
+        if( arrHtml.length == 1 ) return html;
+        let i = 0, scripts = [], head = document.getElementsByTagName('head')[0];
+        while( i < arrHtml.length - 1 ) {
+            let url = arrHtml[i].match(/[\/(\w|\-)+]+\.js/ig);
+            let result = url[0].match(/\/(?<name>[\w|\-]+)\.js$/i);
+            let nameWebComp = result.groups.name;
+            if( !customElements.get( 'brunov-' + nameWebComp ) ) {
+                scripts[i] = document.createElement('script');
+                scripts[i].src = url;
+                scripts[i].type = 'module';
+                scripts[i].setAttribute('onload', this.id + ".setAttribute('total-load', " + this.id + ".getAttribute('total-load')-1);");
+                head.append( scripts[i] );
+                this.totalLoad++;
+            }
+            i++;
+        }
+        return arrHtml[ arrHtml.length - 1 ];
+    }
+
+    /**
      * AJAX-запрос на сервер для режимов "loader" и "html".
      * 
      * @return void

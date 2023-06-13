@@ -208,7 +208,7 @@ describe("Тест вэб-компонента Paste.", function() {
                 paste.totalLoad = total[i];
                 paste.load = load[i];
                 paste.calculatingLimit();
-                assert.equal( paste.limit == limit[i], true, `Ошибка в расчёте!` );
+                assert.equal( paste.limit == limit[i], true, `Ошибка в расчёте параметра "limit"!` );
             }
         });
     });
