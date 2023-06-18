@@ -211,6 +211,10 @@ describe("Тест вэб-компонента Paste.", function() {
                 assert.equal( paste.limit == limit[i], true, `Ошибка в расчёте параметра "limit"!` );
             }
         });
+
+        it(`Проверяем работу метода"moveTagsScript":`, function() {
+            
+        });
     });
 });
 
