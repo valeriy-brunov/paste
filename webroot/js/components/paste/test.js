@@ -162,7 +162,7 @@ describe("Тест вэб-компонента Paste.", function() {
             paste.dom = Template.mapDom( paste );
         });
 
-        it(`Проверяем работу метода "moveProgress":`, function() {
+        it(`Проверяем работу метода "moveProgress".`, function() {
             paste.barSpeedProgress = Math.floor( Math.random() * 100 );
             paste.barStandartProgress = Math.floor( Math.random() * 100 );
             paste.currentProgress = 0;
@@ -171,7 +171,7 @@ describe("Тест вэб-компонента Paste.", function() {
             assert.equal( paste.dom.tagProgress.style.getPropertyValue('width') == paste.currentProgress + '%', true, 'Значение в атрибуте "style" установлено не верно!');
         });
 
-        it(`Проверяем работу метода "standartProgress":`, function() {
+        it(`Проверяем работу метода "standartProgress".`, function() {
             let clock = sinon.useFakeTimers({toFake: ["setTimeout"]});
             sinon.stub( clock, 'setTimeout' ).callsFake( function mytime() {
                 paste.standartProgress();
@@ -183,7 +183,7 @@ describe("Тест вэб-компонента Paste.", function() {
             assert.equal( paste.currentProgress == 100, true, 'Прогресс-бар не достиг 100%!' );
         });
 
-        it(`Проверяем работу метода "limitSpeedProgress":`, function() {
+        it(`Проверяем работу метода "limitSpeedProgress".`, function() {
             let clock = sinon.useFakeTimers({toFake: ["setTimeout"]});
             sinon.stub( clock, 'setTimeout' ).callsFake( function mytime() {
                 if ( paste.currentProgress < paste.limit ) {
@@ -200,7 +200,7 @@ describe("Тест вэб-компонента Paste.", function() {
             });
         });
 
-        it(`Проверяем работу метода "calculatingLimit":`, function() {
+        it(`Проверяем работу метода "calculatingLimit".`, function() {
             let total = [0,   1,  1,   2,  2,   10];
             let load  = [0,   0,  1,   1,  2,   5 ];
             let limit = [100, 50, 100, 75, 100, 75];
@@ -212,7 +212,69 @@ describe("Тест вэб-компонента Paste.", function() {
             }
         });
 
-        it(`Проверяем работу метода"moveTagsScript":`, function() {
+        it(`Проверяем работу метода"moveTagsScript".`, function() {
+            // Возвращает строку, содержащую теги "<script>".
+            let createTagScript = function( countLoad, countNotLoad ) {
+                let total = countLoad + countNotLoad;
+                let url = document.getElementsByTagName('script')[0].getAttribute('src');
+                if ( url ) {
+                    let html = '';
+                    for ( let i = 0; i < total; i++ ) {
+                        if ( countLoad > 0 ) {
+                            html+= `<script src="${url}"></script>`;
+                            countLoad--;
+                        }
+                        if ( countNotLoad > 0 ) {
+                            html+= '<script src="#"></script>';
+                            countNotLoad--;
+                        }
+                    }
+                    return html;
+                }
+                else return '';
+            };
+            // Строка из случайных символов (букв и цифр).
+            let randString = function( len, numbers = true ) {
+                let str = '';
+                let simbol = ['a','b','c','m','f','r','t'];
+                if ( numbers ) {
+                    simbol.push( '0','1','2','3','4','5','6','7','8','9' );
+                }
+                for ( let i = 0; i < len; i++) {
+                    let val = Math.floor( Math.random()*( simbol.length ) );
+                    str+=simbol[val];
+                }
+                return str;
+            }
+            // Создаёт Html код.
+            let createHtml = function( countDiv, startDiv = false ) {
+                let str = '';
+                let wrapDiv = function() {
+                    let str = '<div class="' + randString(5, false) + randString(10) + '">';
+                    str+= randString( Math.floor( Math.random()*100 +1 ));
+                    str+= '</div>';
+                    return str;
+                };
+                for( let i = 1; i < countDiv + 1; i++ ) {
+                    if( startDiv ) {
+                        str+= wrapDiv();
+                        startDiv = false;
+                    }
+                    str+= randString( Math.floor( Math.random()*100 + 1 ));
+                    str+= wrapDiv();
+                    str+= randString( Math.floor( Math.random()*100 + 1 ));
+                }
+                return str;
+            }
+
+            let html = createHtml( 2, true );
+            let newHtml = paste.moveTagsScript( html );
+            assert.equal( html == newHtml, true, `Ошибка! Скрипт должен вернуть переданную строку!` );
+            //console.log( createTagScript(2,3) + html );
+            let html2 = createHtml( 2 );
+            let newHtml2 = paste.moveTagsScript( html2 );
+            assert.equal( html2 == newHtml2, true, `Ошибка! Скрипт должен вернуть переданную строку!` );
+
             
         });
     });

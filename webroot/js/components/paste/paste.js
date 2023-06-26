@@ -295,20 +295,20 @@ export default class Paste extends HTMLElement {
      * Переносит теги "<script>" в шапку страницы (формирует их вновь из js-кода), удаляет теги "<script>"
      * в переданной переменной "html". Добавляет к каждому тегу "<script>" новые атрибуты: "data-load" - который
      * укажет, что данные загружены (значение 1) или не загружены (значение 0); "onload" - который изменит
-     * значение атрибута "data-load" на значение 1 (данные загружены).
+     * значение атрибута "data-load" на значение 1 (данные загружены), если загрузка файла пройдет успешно.
      * 
      * @param  {string} html Код-html, полученный от AJAX-запроса.
      * @return {string} Код-html без тегов "<script>".
      */
     moveTagsScript( html ) {
         let arrHtml = html.split( '</script>' );
-        if (arrHtml.length == 1) return html;
+        if ( arrHtml.length == 1 ) return html;
         let i = 0, scripts = [], head = document.getElementsByTagName('head')[0];
-        while (i < arrHtml.length - 1) {
+        while ( i < arrHtml.length - 1 ) {
             let url = arrHtml[i].match(/[\/(\w|\-)+]+\.js/ig);
             let result = url[0].match(/\/(?<name>[\w|\-]+)\.js$/i);
             let nameWebComp = result.groups.name;
-            if (!customElements.get( 'brunov-' + nameWebComp )) {
+            if ( !customElements.get( 'brunov-' + nameWebComp ) ) {
                 scripts[i] = document.createElement('script');
                 scripts[i].src = url;
                 scripts[i].type = 'module';
@@ -329,9 +329,9 @@ export default class Paste extends HTMLElement {
      */
     calculatingLoad() {
         for ( let scriptLoad of document.querySelectorAll('[data-load]') ) {
-            if (scriptLoad.dataset.load) this.load++;
+            if ( scriptLoad.dataset.load ) this.load++;
         }
-        if (this.currentProgress < 100) setTimeout( () => {
+        if ( this.currentProgress < 100 ) setTimeout( () => {
             this.calculatingLimit();
             this.calculatingLoad();
         }, 100);
@@ -339,8 +339,11 @@ export default class Paste extends HTMLElement {
 
     /**
      * Добавляет к тегам "<img>" атрибут "onload" и "data-load".
+     * 
+     * @param  {string} html Код-html, полученный от AJAX-запроса.
+     * @return {string} Код-html .
      */
-    loadingImg( html ) {}
+    onLoadingImg( html ) {}
 
     /**
      * AJAX-запрос на сервер для режимов "loader" и "html".
