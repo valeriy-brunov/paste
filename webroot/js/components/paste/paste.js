@@ -303,18 +303,19 @@ export default class Paste extends HTMLElement {
     moveTagsScript( html ) {
         let arrHtml = html.split( '</script>' );
         if ( arrHtml.length == 1 ) return html;
-        let i = 0, scripts = [], head = document.getElementsByTagName('head')[0];
+        let i = 0;
+        let head = document.getElementsByTagName('head')[0];
         while ( i < arrHtml.length - 1 ) {
-            let url = arrHtml[i].match(/[\/(\w|\-)+]+\.js/ig);
-            let result = url[0].match(/\/(?<name>[\w|\-]+)\.js$/i);
-            let nameWebComp = result.groups.name;
+            let url = arrHtml[i].match(/src=("|')(?<jsurl>(\/|\w|\#|\-)+\.js)("|')/i);
+            let result = url.groups.jsurl.match(/\/*(?<nameweb>(\w|\-|\#)+)\.js$/i);
+            let nameWebComp = result.groups.nameweb;
             if ( !customElements.get( 'brunov-' + nameWebComp ) ) {
-                scripts[i] = document.createElement('script');
-                scripts[i].src = url;
-                scripts[i].type = 'module';
-                scripts[i].setAttribute('data-load', 0);
-                scripts[i].setAttribute('onload', "this.setAttribute('data-load', 1)");
-                head.append( scripts[i] );
+                let scripts = document.createElement('script');
+                scripts.src = url.groups.jsurl;
+                scripts.type = 'module';
+                scripts.setAttribute('data-load', 0);
+                scripts.setAttribute('onload', "this.setAttribute('data-load', 1)");
+                head.append( scripts );
                 this.totalLoad++;
             }
             i++;

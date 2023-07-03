@@ -225,7 +225,7 @@ describe("Тест вэб-компонента Paste.", function() {
                             countLoad--;
                         }
                         if ( countNotLoad > 0 ) {
-                            html+= '<script src="#"></script>';
+                            html+= '<script src="#.js"></script>';
                             countNotLoad--;
                         }
                     }
@@ -270,12 +270,33 @@ describe("Тест вэб-компонента Paste.", function() {
             let html = createHtml( 2, true );
             let newHtml = paste.moveTagsScript( html );
             assert.equal( html == newHtml, true, `Ошибка! Скрипт должен вернуть переданную строку!` );
-            //console.log( createTagScript(2,3) + html );
+
             let html2 = createHtml( 2 );
             let newHtml2 = paste.moveTagsScript( html2 );
             assert.equal( html2 == newHtml2, true, `Ошибка! Скрипт должен вернуть переданную строку!` );
 
+            let head = document.getElementsByTagName('head')[0];
             
+            for (let i = 0; i < 10; i++) {
+                for (let k = 0; k < 10; k++) {
+                    if ( i > 0 || k > 0 ) {
+                        paste.totalLoad = 0;
+                        let htmlStr = createHtml( 2, true );
+                        let strHtml = createTagScript( i, k ) + htmlStr;
+                        let html = paste.moveTagsScript( strHtml );
+                        assert.equal( html == htmlStr, true, `Возвращаемая строка не совпадает со строкой, переданной коду!` );
+                        let tagScripts = head.querySelectorAll('[data-load]');
+                        assert.equal( tagScripts.length == paste.totalLoad, true, `Значение "totalLoad" не совпадает с количеством тегов <script>!` );
+                        let tagScriptsLoad = head.querySelectorAll('script[data-load=\"1\"]');
+                        let tagScriptsNotLoad = head.querySelectorAll('script[data-load=\"0\"]');
+                        let sym = tagScriptsNotLoad.length + tagScriptsLoad.length;
+                        assert.equal( sym == (i + k), true, `Не совпадает количество тегов с "data-load"="1" и "data-load"="0"!` );
+                        for ( let tagScript of tagScripts) {
+                            tagScript.remove();
+                        }
+                    }
+                }
+            }
         });
     });
 });
