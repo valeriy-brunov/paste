@@ -24,7 +24,7 @@ export default class Paste extends HTMLElement {
         this.insertAdjacentHTML( 'afterbegin', Template.render() );
 
         // Кешируем значения.
-        // this.cashe = this.casheValue();
+        this.cashe = this.casheValue();
     }
 
     /**
@@ -32,7 +32,7 @@ export default class Paste extends HTMLElement {
      */
     casheValue() {
         return {
-            //myVal: 'Значение или объект',
+            head: document.getElementsByTagName('head')[0],
         }
     }
 
@@ -278,7 +278,10 @@ export default class Paste extends HTMLElement {
     }
 
     /**
-     * Производит очередной расчёт предела загрузки прогресс-бара.
+     * Производит очередной расчёт предела загрузки 'limit' прогресс-бара.
+     * 
+     * В формуле подсчета 'limit' уже учитано, что 'html' код загружен, поэтому
+     * формула подсчёта начинается с добавления к значению 50. 
      * 
      * @return void
      */
@@ -304,7 +307,7 @@ export default class Paste extends HTMLElement {
         let arrHtml = html.split( '</script>' );
         if ( arrHtml.length == 1 ) return html;
         let i = 0;
-        let head = document.getElementsByTagName('head')[0];
+        //let head = document.getElementsByTagName('head')[0];
         while ( i < arrHtml.length - 1 ) {
             let url = arrHtml[i].match(/src=("|')(?<jsurl>(\/|\w|\#|\-)+\.js)("|')/i);
             let result = url.groups.jsurl.match(/\/*(?<nameweb>(\w|\-|\#)+)\.js$/i);
@@ -315,7 +318,7 @@ export default class Paste extends HTMLElement {
                 scripts.type = 'module';
                 scripts.setAttribute('data-load', 0);
                 scripts.setAttribute('onload', "this.setAttribute('data-load', 1)");
-                head.append( scripts );
+                this.cashe.head.append( scripts );
                 this.totalLoad++;
             }
             i++;
@@ -329,9 +332,11 @@ export default class Paste extends HTMLElement {
      * @return void
      */
     calculatingLoad() {
-        for ( let scriptLoad of document.querySelectorAll('[data-load]') ) {
+        /*for ( let scriptLoad of this.cashe.head.querySelectorAll('[data-load]') ) {
             if ( scriptLoad.dataset.load ) this.load++;
-        }
+        }*/
+        let dataLoad = this.cashe.head.querySelectorAll('[data-load]');
+        if ( dataLoad.length > 0 ) this.limit = dataLoad.length;
         if ( this.currentProgress < 100 ) setTimeout( () => {
             this.calculatingLimit();
             this.calculatingLoad();

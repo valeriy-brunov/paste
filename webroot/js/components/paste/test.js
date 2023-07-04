@@ -298,6 +298,14 @@ describe("Тест вэб-компонента Paste.", function() {
                 }
             }
         });
+
+        it(`Проверяем работу метода "calculatingLoad".`, function() {
+            let clock = sinon.useFakeTimers({toFake: ["setTimeout"]});
+            sinon.stub( clock, 'setTimeout' ).callsFake( function mytime() {
+                paste.calculatingLimit();
+                paste.calculatingLoad();
+            });
+        });
     });
 });
 
